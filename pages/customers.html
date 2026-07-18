@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Customer Segmentation — Sales Analytics Dashboard" />
+  <title>Customers · SalesIQ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/design-system.css" />
+  <link rel="stylesheet" href="../assets/css/animations.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <style>
+    .cust-kpi { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-6); }
+    .cust-charts { display: grid; grid-template-columns: 2fr 1fr; gap: var(--space-6); margin-top: var(--space-6); }
+    .seg-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); margin-top: var(--space-6); }
+    .seg-card { background: var(--color-glass); border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: var(--space-5); text-align: center; transition: var(--transition-normal); }
+    .seg-card:hover { transform: translateY(-3px); border-color: var(--color-border-strong); }
+    .seg-card__count { font-family: var(--font-mono); font-size: var(--font-size-4xl); font-weight: 800; margin-bottom: 4px; }
+    .seg-card__label { font-size: var(--font-size-sm); color: var(--color-text-muted); }
+    .seg-card__bar { height: 4px; border-radius: var(--radius-full); margin-top: var(--space-3); }
+    @media (max-width: 1280px) { .cust-kpi { grid-template-columns: repeat(2,1fr); } .seg-cards { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 1024px) { .cust-charts { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="app-sidebar">
+    <nav class="sidebar">
+      <a href="../index.html" class="sidebar__logo">
+        <div class="sidebar__logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div class="sidebar-logo-text"><span class="logo-name">SalesIQ</span><span class="logo-sub">Analytics</span></div>
+      </a>
+      <div class="sidebar__nav">
+        <div class="sidebar-section-title">Main Menu</div>
+        <a href="../index.html" class="nav-item"><span class="nav-item__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span><span class="sidebar-label">Overview</span></a>
+        <a href="products.html" class="nav-item"><span class="nav-item__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></span><span class="sidebar-label">Products</span></a>
+        <a href="customers.html" class="nav-item active"><span class="nav-item__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span><span class="sidebar-label">Customers</span></a>
+        <a href="geography.html" class="nav-item"><span class="nav-item__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></span><span class="sidebar-label">Geography</span></a>
+        <a href="reports.html" class="nav-item"><span class="nav-item__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span><span class="sidebar-label">Reports</span></a>
+      </div>
+      <div class="sidebar__footer">
+        <div class="sidebar__user">
+          <div class="sidebar__user-avatar">EK</div>
+          <div class="sidebar__user-info"><div class="sidebar__user-name">Ekavardhan</div><div class="sidebar__user-role">Admin</div></div>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="app-main">
+    <header class="app-topbar">
+      <div class="topbar">
+        <div class="topbar__left">
+          <h1 class="topbar__title">Customers</h1>
+          <p class="topbar__subtitle">Segmentation, lifetime value, and growth analytics</p>
+        </div>
+        <div class="topbar__right">
+          <select class="select" id="segment-filter">
+            <option value="all">All Segments</option>
+            <option value="vip">VIP</option>
+            <option value="premium">Premium</option>
+            <option value="regular">Regular</option>
+            <option value="new">New</option>
+          </select>
+          <select class="select" id="region-filter-cust">
+            <option value="all">All Regions</option>
+            <option value="North">North</option>
+            <option value="South">South</option>
+            <option value="East">East</option>
+            <option value="West">West</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <div class="app-content page-enter">
+
+      <!-- KPI Row -->
+      <div class="cust-kpi">
+        <div class="kpi-card kpi-card--primary animate-on-load animate-fade-in-up">
+          <div class="kpi-card__top">
+            <div class="kpi-card__icon kpi-card__icon--primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+            <div class="kpi-card__trend kpi-card__trend--up">↑ 24.7%</div>
+          </div>
+          <div class="kpi-card__value font-mono" id="cust-total">0</div>
+          <div class="kpi-card__label">Total Customers</div>
+        </div>
+        <div class="kpi-card kpi-card--accent animate-on-load animate-fade-in-up delay-150">
+          <div class="kpi-card__top">
+            <div class="kpi-card__icon kpi-card__icon--accent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+            <div class="kpi-card__trend kpi-card__trend--up">↑ 31.2%</div>
+          </div>
+          <div class="kpi-card__value font-mono" id="cust-new">0</div>
+          <div class="kpi-card__label">New This Year</div>
+        </div>
+        <div class="kpi-card kpi-card--success animate-on-load animate-fade-in-up delay-300">
+          <div class="kpi-card__top">
+            <div class="kpi-card__icon kpi-card__icon--success"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+            <div class="kpi-card__trend kpi-card__trend--up">↑ 8.4%</div>
+          </div>
+          <div class="kpi-card__value font-mono" id="cust-ltv">$0</div>
+          <div class="kpi-card__label">Avg. Lifetime Value</div>
+        </div>
+        <div class="kpi-card kpi-card--warning animate-on-load animate-fade-in-up delay-400">
+          <div class="kpi-card__top">
+            <div class="kpi-card__icon kpi-card__icon--warning"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div>
+            <div class="kpi-card__trend kpi-card__trend--down">↓ 0.3%</div>
+          </div>
+          <div class="kpi-card__value font-mono" id="cust-churn">7.8%</div>
+          <div class="kpi-card__label">Churn Rate</div>
+        </div>
+      </div>
+
+      <!-- Segment Breakdown Cards -->
+      <div class="seg-cards">
+        <div class="seg-card animate-on-load animate-fade-in-up">
+          <div class="seg-card__count" style="color:var(--color-warning);">2</div>
+          <div class="seg-card__label">VIP Customers</div>
+          <div class="seg-card__bar" style="background:linear-gradient(90deg,var(--color-warning),transparent);"></div>
+        </div>
+        <div class="seg-card animate-on-load animate-fade-in-up delay-100">
+          <div class="seg-card__count" style="color:var(--color-primary);">3</div>
+          <div class="seg-card__label">Premium Customers</div>
+          <div class="seg-card__bar" style="background:linear-gradient(90deg,var(--color-primary),transparent);"></div>
+        </div>
+        <div class="seg-card animate-on-load animate-fade-in-up delay-200">
+          <div class="seg-card__count" style="color:var(--color-accent);">3</div>
+          <div class="seg-card__label">Regular Customers</div>
+          <div class="seg-card__bar" style="background:linear-gradient(90deg,var(--color-accent),transparent);"></div>
+        </div>
+        <div class="seg-card animate-on-load animate-fade-in-up delay-300">
+          <div class="seg-card__count" style="color:var(--color-success);">2</div>
+          <div class="seg-card__label">New Customers</div>
+          <div class="seg-card__bar" style="background:linear-gradient(90deg,var(--color-success),transparent);"></div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="cust-charts">
+        <div class="chart-card animate-on-load animate-fade-in-up delay-200">
+          <div class="chart-card__header">
+            <div><div class="chart-card__title">Customer Growth</div><div class="chart-card__subtitle">New vs returning customers · 2024</div></div>
+            <div class="legend">
+              <div class="legend__item"><div class="legend__dot" style="background:#10b981;"></div>New</div>
+              <div class="legend__item"><div class="legend__dot" style="background:#6366f1;"></div>Returning</div>
+            </div>
+          </div>
+          <div class="chart-card__body" style="height:280px;"><canvas id="chart-customer-growth"></canvas></div>
+        </div>
+        <div class="chart-card animate-on-load animate-fade-in-up delay-300">
+          <div class="chart-card__header">
+            <div><div class="chart-card__title">By Segment</div><div class="chart-card__subtitle">Customer distribution</div></div>
+          </div>
+          <div class="chart-card__body" style="height:280px;"><canvas id="chart-segment-pie"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Top Customers Table -->
+      <div class="chart-card animate-on-load animate-fade-in-up delay-200" style="margin-top:var(--space-6);">
+        <div class="chart-card__header">
+          <div><div class="chart-card__title">Top Customers</div><div class="chart-card__subtitle" id="cust-table-label">All customers by lifetime value</div></div>
+          <div class="topbar__search" style="width:220px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="cust-search" placeholder="Search customers…" autocomplete="off" />
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table class="table" id="customers-table">
+            <thead>
+              <tr>
+                <th data-sort="name" data-type="string">Customer</th>
+                <th data-sort="segment" data-type="string">Segment</th>
+                <th data-sort="region" data-type="string">Region</th>
+                <th data-sort="orders" data-type="number">Orders</th>
+                <th data-sort="ltv" data-type="number">Lifetime Value</th>
+                <th data-sort="avgOrder" data-type="number">Avg Order</th>
+                <th data-sort="lastOrder" data-type="string">Last Order</th>
+              </tr>
+            </thead>
+            <tbody id="customers-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/utils.js"></script>
+<script src="../assets/js/filters.js"></script>
+<script src="../assets/js/charts.js"></script>
+<script>
+'use strict';
+document.addEventListener('DOMContentLoaded', function () {
+  Charts.applyGlobalDefaults();
+  const custs = SalesData.customers;
+
+  // KPIs
+  Utils.animateCounter(document.getElementById('cust-total'), SalesData.kpiSummary.totalCustomers, 1400, v => Utils.formatCompact(Math.round(v)));
+  const totalNew = SalesData.customerGrowth.new.reduce((s,n) => s+n, 0);
+  Utils.animateCounter(document.getElementById('cust-new'), totalNew, 1200, v => Utils.formatCompact(Math.round(v)));
+  const avgLtv = custs.reduce((s,c) => s+c.ltv, 0) / custs.length;
+  Utils.animateCounter(document.getElementById('cust-ltv'), avgLtv, 1300, v => Utils.formatCurrency(v, true));
+
+  // Customer growth chart
+  Charts.createCustomerGrowth('chart-customer-growth', SalesData.MONTHS, SalesData.customerGrowth.new, SalesData.customerGrowth.returning);
+
+  // Segment pie
+  const segCounts = SalesData.getSegmentCounts();
+  const segments = Object.entries(segCounts).map(([label, value]) => ({ label, value }));
+  Charts.createSegmentPie('chart-segment-pie', segments);
+
+  // Table
+  function renderTable(customers) {
+    const tbody = document.getElementById('customers-tbody');
+    document.getElementById('cust-table-label').textContent = `Showing ${customers.length} customers`;
+    tbody.innerHTML = customers.map(c => `<tr>
+      <td>
+        <div class="table__avatar" data-col="name" data-value="${c.name}">
+          <div class="table__avatar-initials" style="background:${c.color};opacity:0.85;">${c.initials}</div>
+          <div>
+            <div class="table__avatar-name">${c.name}</div>
+            <div class="table__avatar-sub">${c.email}</div>
+          </div>
+        </div>
+      </td>
+      <td data-col="segment" data-value="${c.segment}"><span class="badge ${Utils.getSegmentBadge(c.segment)}">${c.segment}</span></td>
+      <td data-col="region" data-value="${c.region}"><span class="badge badge--muted">${c.region}</span></td>
+      <td data-col="orders" data-value="${c.orders}" class="font-mono" style="color:var(--color-text);">${c.orders}</td>
+      <td data-col="ltv" data-value="${c.ltv}"><span class="font-mono" style="color:var(--color-primary-light);font-weight:600;">${Utils.formatCurrency(c.ltv)}</span></td>
+      <td data-col="avgOrder" data-value="${c.avgOrder}" class="font-mono">${Utils.formatCurrency(c.avgOrder)}</td>
+      <td data-col="lastOrder" data-value="${c.lastOrder}">${Utils.formatDate(c.lastOrder, 'medium')}</td>
+    </tr>`).join('');
+    Utils.makeTableSortable(document.getElementById('customers-table'));
+  }
+
+  renderTable(custs);
+
+  // Filters
+  document.getElementById('segment-filter').addEventListener('change', function () {
+    const val = this.value.toLowerCase();
+    const filtered = val === 'all' ? custs : custs.filter(c => c.segment.toLowerCase() === val);
+    renderTable(filtered);
+  });
+
+  document.getElementById('region-filter-cust').addEventListener('change', function () {
+    const val = this.value;
+    const filtered = val === 'all' ? custs : custs.filter(c => c.region === val);
+    renderTable(filtered);
+  });
+
+  document.getElementById('cust-search').addEventListener('input', Utils.debounce(function () {
+    Filters.setSearch(this.value);
+    renderTable(Filters.getFilteredCustomers());
+  }, 300));
+
+  document.querySelectorAll('.animate-on-load').forEach((el, i) => { el.style.animationDelay = (i * 80) + 'ms'; });
+});
+</script>
+</body>
+</html>
