@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sales Reports & Analytics Export — SalesIQ Dashboard" />
+  <title>Reports · SalesIQ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/design-system.css" />
+  <link rel="stylesheet" href="../assets/css/animations.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <style>
+    .reports-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
+    .report-card { background: var(--color-glass); border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: var(--space-6); transition: var(--transition-normal); }
+    .report-card:hover { border-color: var(--color-border-strong); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+    .report-card__icon { width: 48px; height: 48px; border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-4); }
+    .report-card__title { font-size: var(--font-size-md); font-weight: 600; color: var(--color-text); margin-bottom: var(--space-2); }
+    .report-card__desc { font-size: var(--font-size-sm); color: var(--color-text-muted); margin-bottom: var(--space-5); line-height: 1.6; }
+    .export-panel { background: var(--color-glass); border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: var(--space-8); text-align: center; margin-bottom: var(--space-6); position: relative; overflow: hidden; }
+    .export-panel::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center top, rgba(99,102,241,0.08) 0%, transparent 70%); pointer-events: none; }
+    .comparison-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-6); margin-top: var(--space-6); }
+    .comparison-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: var(--space-4); align-items: center; padding: var(--space-4); border-radius: var(--radius-lg); transition: var(--transition-fast); }
+    .comparison-row:hover { background: var(--color-glass-hover); }
+    .comparison-header { font-size: var(--font-size-xs); font-weight: 600; color: var(--color-text-muted); letter-spacing: var(--letter-spacing-wider); text-transform: uppercase; }
+    @media (max-width: 1280px) { .reports-grid { grid-template-columns: repeat(2,1fr); } .comparison-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) { .reports-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="app-sidebar">
+    <nav class="sidebar">
+      <a href="../index.html" class="sidebar__logo">
+        <div class="sidebar__logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div class="sidebar-logo-text"><span class="logo-name">SalesIQ</span><span class="logo-sub">Analytics</span></div>
+      </a>
+      <div class="sidebar__nav">
+        <div class="sidebar-section-title">Main Menu</div>
+        <a href="../index.html" class="nav-item"><span class="nav-item__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span><span class="sidebar-label">Overview</span></a>
+        <a href="products.html" class="nav-item"><span class="nav-item__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></span><span class="sidebar-label">Products</span></a>
+        <a href="customers.html" class="nav-item"><span class="nav-item__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span><span class="sidebar-label">Customers</span></a>
+        <a href="geography.html" class="nav-item"><span class="nav-item__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></span><span class="sidebar-label">Geography</span></a>
+        <a href="reports.html" class="nav-item active"><span class="nav-item__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span><span class="sidebar-label">Reports</span></a>
+      </div>
+      <div class="sidebar__footer">
+        <div class="sidebar__user">
+          <div class="sidebar__user-avatar">EK</div>
+          <div class="sidebar__user-info"><div class="sidebar__user-name">Ekavardhan</div><div class="sidebar__user-role">Admin</div></div>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="app-main">
+    <header class="app-topbar">
+      <div class="topbar">
+        <div class="topbar__left">
+          <h1 class="topbar__title">Reports</h1>
+          <p class="topbar__subtitle">Export data, compare periods, and generate summaries</p>
+        </div>
+        <div class="topbar__right">
+          <button class="btn btn--primary btn--sm" id="btn-print">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Print
+          </button>
+          <button class="btn btn--ghost btn--sm" id="btn-export-all">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            Export CSV
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="app-content page-enter">
+
+      <!-- Export Panel Hero -->
+      <div class="export-panel animate-on-load animate-fade-in-up">
+        <div style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:var(--radius-xl);background:var(--color-primary-subtle);margin-bottom:var(--space-4);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" width="32" height="32"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <h2 style="font-size:var(--font-size-3xl);font-weight:800;margin-bottom:8px;">2024 Annual Sales Report</h2>
+        <p style="color:var(--color-text-muted);margin-bottom:var(--space-6);max-width:500px;margin-left:auto;margin-right:auto;">
+          Full-year performance summary covering revenue, orders, customer growth, and regional analytics.
+        </p>
+        <div style="display:flex;gap:var(--space-3);justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn--primary" id="export-revenue-csv">📊 Export Revenue CSV</button>
+          <button class="btn btn--ghost" id="export-products-csv">📦 Export Products CSV</button>
+          <button class="btn btn--ghost" id="export-customers-csv">👥 Export Customers CSV</button>
+          <button class="btn btn--ghost" id="export-regional-csv">🌍 Export Regional CSV</button>
+        </div>
+      </div>
+
+      <!-- Report Cards Grid -->
+      <div class="reports-grid">
+
+        <div class="report-card animate-on-load animate-fade-in-up">
+          <div class="report-card__icon" style="background:var(--color-primary-subtle);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" width="24" height="24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div class="report-card__title">Revenue Report</div>
+          <div class="report-card__desc">Month-by-month revenue, targets, profit margins, and YoY growth analysis.</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-4);">
+            <div><div style="font-size:11px;color:var(--color-text-muted);">Total Revenue</div><div class="font-mono" style="font-weight:700;color:var(--color-text);" id="rep-revenue">—</div></div>
+            <div><div style="font-size:11px;color:var(--color-text-muted);">Growth</div><div style="font-weight:700;color:var(--color-success);">+18.3%</div></div>
+          </div>
+          <button class="btn btn--ghost btn--sm w-full" onclick="document.getElementById('export-revenue-csv').click()">Download CSV</button>
+        </div>
+
+        <div class="report-card animate-on-load animate-fade-in-up delay-150">
+          <div class="report-card__icon" style="background:var(--color-accent-subtle);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2" width="24" height="24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+          </div>
+          <div class="report-card__title">Orders Report</div>
+          <div class="report-card__desc">Order volume, fulfillment rates, return rates, and average order values by month.</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-4);">
+            <div><div style="font-size:11px;color:var(--color-text-muted);">Total Orders</div><div class="font-mono" style="font-weight:700;color:var(--color-text);" id="rep-orders">—</div></div>
+            <div><div style="font-size:11px;color:var(--color-text-muted);">Return Rate</div><div style="font-weight:700;color:var(--color-warning);">8.2%</div></div>
+          </div>
+          <button class="btn btn--ghost btn--sm w-full" onclick="document.getElementById('export-revenue-csv').click()">Download CSV</button>
+        </div>
+
+        <div class="report-card animate-on-load animate-fade-in-up delay-300">
+          <div class="report-card__icon" style="background:var(--color-success-subtle);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" width="24" height="24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          </div>
+          <div class="report-card__title">Customer Report</div>
+          <div class="report-card__desc">Acquisition, segmentation, lifetime value, churn rates, and retention analytics.</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-4);">
+            <div><div style="font-size:11px;color:var(--color-text-muted);">Total Customers</div><div class="font-mono" style="font-weight:700;color:var(--color-text);">19,743</div></div>
+            <div><div style="font-size:11px;color:var(--color-text-muted);">Growth</div><div style="font-weight:700;color:var(--color-success);">+24.7%</div></div>
+          </div>
+          <button class="btn btn--ghost btn--sm w-full" onclick="document.getElementById('export-customers-csv').click()">Download CSV</button>
+        </div>
+
+        <div class="report-card animate-on-load animate-fade-in-up delay-100">
+          <div class="report-card__icon" style="background:var(--color-purple-subtle);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" width="24" height="24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+          </div>
+          <div class="report-card__title">Regional Report</div>
+          <div class="report-card__desc">Performance breakdown by region and city, including growth rates and market share.</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-4);">
+            <div><div style="font-size:11px;color:var(--color-text-muted);">Regions</div><div class="font-mono" style="font-weight:700;color:var(--color-text);">5</div></div>
+            <div><div style="font-size:11px;color:var(--color-text-muted);">Top Region</div><div style="font-weight:700;color:var(--color-accent);">East</div></div>
+          </div>
+          <button class="btn btn--ghost btn--sm w-full" onclick="document.getElementById('export-regional-csv').click()">Download CSV</button>
+        </div>
+
+        <div class="report-card animate-on-load animate-fade-in-up delay-200">
+          <div class="report-card__icon" style="background:var(--color-warning-subtle);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" width="24" height="24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          </div>
+          <div class="report-card__title">Product Report</div>
+          <div class="report-card__desc">SKU-level performance, revenue per product, units sold, ratings, and inventory status.</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-4);">
+            <div><div style="font-size:11px;color:var(--color-text-muted);">SKUs</div><div class="font-mono" style="font-weight:700;color:var(--color-text);">12</div></div>
+            <div><div style="font-size:11px;color:var(--color-text-muted);">Top Product</div><div style="font-weight:700;color:var(--color-warning);font-size:11px;">ProBook Elite</div></div>
+          </div>
+          <button class="btn btn--ghost btn--sm w-full" onclick="document.getElementById('export-products-csv').click()">Download CSV</button>
+        </div>
+
+        <div class="report-card animate-on-load animate-fade-in-up delay-300">
+          <div class="report-card__icon" style="background:var(--color-danger-subtle);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" width="24" height="24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          </div>
+          <div class="report-card__title">Profit & Loss</div>
+          <div class="report-card__desc">Monthly P&L statement with revenue, costs, profit margins, and YoY comparison.</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-4);">
+            <div><div style="font-size:11px;color:var(--color-text-muted);">Net Profit</div><div class="font-mono" style="font-weight:700;color:var(--color-success);" id="rep-profit">—</div></div>
+            <div><div style="font-size:11px;color:var(--color-text-muted);">Margin</div><div style="font-weight:700;color:var(--color-success);">30.4%</div></div>
+          </div>
+          <button class="btn btn--ghost btn--sm w-full" onclick="document.getElementById('export-revenue-csv').click()">Download CSV</button>
+        </div>
+
+      </div>
+
+      <!-- Year over Year Comparison Table -->
+      <div class="comparison-grid">
+
+        <div class="chart-card animate-on-load animate-fade-in-up delay-200">
+          <div class="chart-card__header">
+            <div><div class="chart-card__title">Year-over-Year Comparison</div><div class="chart-card__subtitle">2023 vs 2024 key metrics</div></div>
+          </div>
+          <div style="padding: 0 var(--space-2);">
+            <div class="comparison-row comparison-header">
+              <div>Metric</div><div>2023</div><div>2024</div><div>Change</div>
+            </div>
+            <div id="yoy-table"></div>
+          </div>
+        </div>
+
+        <div class="chart-card animate-on-load animate-fade-in-up delay-300">
+          <div class="chart-card__header">
+            <div><div class="chart-card__title">Monthly Summary</div><div class="chart-card__subtitle">Best & worst months of 2024</div></div>
+          </div>
+          <div id="monthly-summary"></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/utils.js"></script>
+<script src="../assets/js/filters.js"></script>
+<script src="../assets/js/charts.js"></script>
+<script>
+'use strict';
+document.addEventListener('DOMContentLoaded', function () {
+  const kpi = SalesData.kpiSummary;
+
+  // Set KPI values
+  document.getElementById('rep-revenue').textContent = Utils.formatCurrency(kpi.totalRevenue, true);
+  document.getElementById('rep-orders').textContent  = Utils.formatCompact(kpi.totalOrders);
+  document.getElementById('rep-profit').textContent  = Utils.formatCurrency(kpi.totalProfit, true);
+
+  // YoY Table
+  const yoyData = [
+    { metric: 'Total Revenue',    prev: kpi.prevRevenue,    curr: kpi.totalRevenue,    fmt: v => Utils.formatCurrency(v, true) },
+    { metric: 'Total Orders',     prev: kpi.prevOrders,     curr: kpi.totalOrders,     fmt: v => Utils.formatCompact(v) },
+    { metric: 'Total Customers',  prev: kpi.prevCustomers,  curr: kpi.totalCustomers,  fmt: v => Utils.formatCompact(v) },
+    { metric: 'Avg Order Value',  prev: kpi.prevAvgOrder,   curr: kpi.avgOrderValue,   fmt: v => '$' + v.toFixed(2) },
+    { metric: 'Profit Margin',    prev: 28.1,               curr: kpi.profitMargin,    fmt: v => v + '%' },
+    { metric: 'Return Rate',      prev: 9.4,                curr: kpi.returnRate,      fmt: v => v + '%' },
+  ];
+
+  const yoyEl = document.getElementById('yoy-table');
+  yoyEl.innerHTML = yoyData.map(row => {
+    const growth = Utils.calcGrowth(row.curr, row.prev);
+    const isPositive = (row.metric === 'Return Rate' || row.metric === 'Churn Rate') ? growth < 0 : growth > 0;
+    const changeColor = isPositive ? 'var(--color-success)' : 'var(--color-danger)';
+    const changeSign  = growth > 0 ? '+' : '';
+    return `<div class="comparison-row">
+      <div style="font-size:var(--font-size-sm);font-weight:500;color:var(--color-text-subtle);">${row.metric}</div>
+      <div class="font-mono" style="font-size:var(--font-size-sm);color:var(--color-text-muted);">${row.fmt(row.prev)}</div>
+      <div class="font-mono" style="font-size:var(--font-size-sm);font-weight:600;color:var(--color-text);">${row.fmt(row.curr)}</div>
+      <div style="font-size:var(--font-size-sm);font-weight:700;color:${changeColor};">${changeSign}${growth.toFixed(1)}%</div>
+    </div>`;
+  }).join('');
+
+  // Monthly Summary
+  const months = SalesData.monthlyRevenue;
+  const best  = months.reduce((a, b) => a.revenue > b.revenue ? a : b);
+  const worst = months.reduce((a, b) => a.revenue < b.revenue ? a : b);
+  const monthlySummaryEl = document.getElementById('monthly-summary');
+  monthlySummaryEl.innerHTML = `
+    <div style="padding:var(--space-4);">
+      <div class="stat-row">
+        <div class="stat-row__label">🏆 Best Month</div>
+        <div style="text-align:right;">
+          <div class="stat-row__value" style="color:var(--color-success);">${best.month} — ${Utils.formatCurrency(best.revenue, true)}</div>
+          <div style="font-size:11px;color:var(--color-text-muted);">${best.orders.toLocaleString()} orders</div>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-row__label">📉 Weakest Month</div>
+        <div style="text-align:right;">
+          <div class="stat-row__value" style="color:var(--color-warning);">${worst.month} — ${Utils.formatCurrency(worst.revenue, true)}</div>
+          <div style="font-size:11px;color:var(--color-text-muted);">${worst.orders.toLocaleString()} orders</div>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-row__label">📈 Peak Growth Month</div>
+        <div style="text-align:right;">
+          <div class="stat-row__value" style="color:var(--color-primary);">Dec — +18.2% MoM</div>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-row__label">💰 Highest Profit</div>
+        <div style="text-align:right;">
+          <div class="stat-row__value">${Utils.formatCurrency(Math.max(...months.map(m=>m.profit)), true)}</div>
+          <div style="font-size:11px;color:var(--color-text-muted);">December 2024</div>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-row__label">📦 Most Orders</div>
+        <div style="text-align:right;">
+          <div class="stat-row__value">${Math.max(...months.map(m=>m.orders)).toLocaleString()}</div>
+          <div style="font-size:11px;color:var(--color-text-muted);">December 2024</div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:var(--space-2) var(--space-4);">
+      <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:var(--space-2);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;">Monthly Revenue Trend</div>
+      <canvas id="chart-monthly-mini" style="height:80px;display:block;"></canvas>
+    </div>`;
+
+  // Mini trend chart
+  setTimeout(() => {
+    const miniCtx = document.getElementById('chart-monthly-mini');
+    if (!miniCtx) return;
+    const ctx = miniCtx.getContext('2d');
+    const grad = ctx.createLinearGradient(0, 0, 0, 80);
+    grad.addColorStop(0, 'rgba(99,102,241,0.4)');
+    grad.addColorStop(1, 'rgba(99,102,241,0)');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: SalesData.MONTHS,
+        datasets: [{ data: months.map(m => m.revenue), borderColor: '#6366f1', backgroundColor: grad, borderWidth: 2, fill: true, tension: 0.4, pointRadius: 0 }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        scales: { x: { display: false }, y: { display: false } },
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => Utils.formatCurrency(ctx.parsed.y, true) } } }
+      }
+    });
+  }, 100);
+
+  // CSV Exports
+  function downloadCSV(filename, rows) {
+    const csv = rows.map(r => r.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  document.getElementById('export-revenue-csv').addEventListener('click', () => {
+    downloadCSV('revenue_2024.csv', [
+      ['Month','Revenue','Target','Profit','Orders','Customers'],
+      ...SalesData.monthlyRevenue.map(m => [m.month,m.revenue,m.target,m.profit,m.orders,m.customers])
+    ]);
+  });
+
+  document.getElementById('export-products-csv').addEventListener('click', () => {
+    downloadCSV('products_2024.csv', [
+      ['ID','Name','Category','Price','Units Sold','Revenue','Growth %','Rating','Stock'],
+      ...SalesData.products.map(p => [p.id,`"${p.name}"`,p.category,p.price,p.sold,p.revenue,p.growth,p.rating,p.stock])
+    ]);
+  });
+
+  document.getElementById('export-customers-csv').addEventListener('click', () => {
+    downloadCSV('customers_2024.csv', [
+      ['ID','Name','Segment','Region','Orders','LTV','Avg Order','Last Order'],
+      ...SalesData.customers.map(c => [c.id,`"${c.name}"`,c.segment,c.region,c.orders,c.ltv,c.avgOrder,c.lastOrder])
+    ]);
+  });
+
+  document.getElementById('export-regional-csv').addEventListener('click', () => {
+    downloadCSV('regional_2024.csv', [
+      ['Region','Revenue','Orders','Customers','Growth %'],
+      ...SalesData.regionalSales.map(r => [r.region,r.revenue,r.orders,r.customers,r.growth])
+    ]);
+  });
+
+  document.getElementById('export-all-csv') && document.getElementById('btn-export-all').addEventListener('click', () => {
+    document.getElementById('export-revenue-csv').click();
+  });
+
+  document.getElementById('btn-export-all').addEventListener('click', () => {
+    document.getElementById('export-revenue-csv').click();
+  });
+
+  document.getElementById('btn-print').addEventListener('click', () => window.print());
+
+  document.querySelectorAll('.animate-on-load').forEach((el, i) => { el.style.animationDelay = (i * 80) + 'ms'; });
+});
+</script>
+</body>
+</html>
