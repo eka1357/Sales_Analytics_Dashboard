@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sales Analytics Dashboard — Real-time revenue, orders, customer, and product performance insights." />
+  <title>Sales Analytics Dashboard</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="assets/css/design-system.css" />
+  <link rel="stylesheet" href="assets/css/animations.css" />
+  <link rel="stylesheet" href="assets/css/components.css" />
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* Page-specific overrides */
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-6); }
+    .charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: var(--space-6); }
+    .bottom-row  { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-6); }
+    .hero-chart-body { position: relative; height: 320px; }
+    .donut-wrapper { display: flex; flex-direction: column; height: 100%; }
+    .donut-chart-wrap { position: relative; height: 200px; flex-shrink: 0; }
+    .hero-stat { text-align: center; }
+    .hero-stat .val { font-family: var(--font-mono); font-size: var(--font-size-4xl); font-weight: 800; }
+    .hero-stat .lbl { font-size: var(--font-size-sm); color: var(--color-text-muted); margin-top: 2px; }
+
+    @media (max-width: 1280px) {
+      .kpi-grid    { grid-template-columns: repeat(2, 1fr); }
+      .charts-row  { grid-template-columns: 1fr; }
+      .bottom-row  { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .kpi-grid   { grid-template-columns: 1fr; }
+      .bottom-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="app-layout">
+
+  <!-- ═══════════════════════════ SIDEBAR ═══════════════════════════ -->
+  <aside class="app-sidebar" id="app-sidebar">
+    <nav class="sidebar">
+      <!-- Logo -->
+      <a href="index.html" class="sidebar__logo">
+        <div class="sidebar__logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+        </div>
+        <div class="sidebar-logo-text">
+          <span class="logo-name">SalesIQ</span>
+          <span class="logo-sub">Analytics</span>
+        </div>
+      </a>
+
+      <!-- Main Navigation -->
+      <div class="sidebar__nav">
+        <div class="sidebar-section-title">Main Menu</div>
+
+        <a href="index.html" class="nav-item active" id="nav-overview">
+          <span class="nav-item__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+              <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+            </svg>
+          </span>
+          <span class="sidebar-label">Overview</span>
+        </a>
+
+        <a href="pages/products.html" class="nav-item" id="nav-products">
+          <span class="nav-item__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="M16 10a4 4 0 01-8 0"/>
+            </svg>
+          </span>
+          <span class="sidebar-label">Products</span>
+        </a>
+
+        <a href="pages/customers.html" class="nav-item" id="nav-customers">
+          <span class="nav-item__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+            </svg>
+          </span>
+          <span class="sidebar-label">Customers</span>
+        </a>
+
+        <a href="pages/geography.html" class="nav-item" id="nav-geography">
+          <span class="nav-item__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+            </svg>
+          </span>
+          <span class="sidebar-label">Geography</span>
+        </a>
+
+        <a href="pages/reports.html" class="nav-item" id="nav-reports">
+          <span class="nav-item__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </span>
+          <span class="sidebar-label">Reports</span>
+        </a>
+
+        <div class="sidebar-section-title" style="margin-top: var(--space-4);">Insights</div>
+
+        <a href="#" class="nav-item" id="nav-alerts">
+          <span class="nav-item__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/>
+            </svg>
+          </span>
+          <span class="sidebar-label">Alerts</span>
+          <span class="nav-item__badge">3</span>
+        </a>
+
+        <a href="#" class="nav-item" id="nav-settings">
+          <span class="nav-item__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+            </svg>
+          </span>
+          <span class="sidebar-label">Settings</span>
+        </a>
+      </div>
+
+      <!-- User -->
+      <div class="sidebar__footer">
+        <div class="sidebar__user">
+          <div class="sidebar__user-avatar">EK</div>
+          <div class="sidebar__user-info">
+            <div class="sidebar__user-name">Ekavardhan</div>
+            <div class="sidebar__user-role">Admin</div>
+          </div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" width="16" height="16">
+            <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
+          </svg>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- ═══════════════════════════ MAIN ═══════════════════════════ -->
+  <main class="app-main">
+
+    <!-- Top Bar -->
+    <header class="app-topbar">
+      <div class="topbar">
+        <div class="topbar__left">
+          <h1 class="topbar__title">Overview</h1>
+          <p class="topbar__subtitle">
+            <span class="status-dot live">Live</span>
+            Full Year 2024 · Updated just now
+          </p>
+        </div>
+        <div class="topbar__right">
+          <!-- Period Tabs -->
+          <div class="tab-group" id="period-tabs">
+            <button class="tab-btn" data-period="week">7D</button>
+            <button class="tab-btn" data-period="month">30D</button>
+            <button class="tab-btn" data-period="quarter">Q4</button>
+            <button class="tab-btn active" data-period="year">YTD</button>
+          </div>
+          <!-- Search -->
+          <div class="topbar__search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" id="global-search" placeholder="Search…" autocomplete="off" />
+          </div>
+          <!-- Notifications -->
+          <button class="topbar__icon-btn" id="btn-notifications" data-tooltip="Notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/>
+            </svg>
+            <span class="topbar__notification-dot"></span>
+          </button>
+          <!-- Export -->
+          <button class="btn btn--ghost btn--sm" id="btn-export">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+            </svg>
+            Export
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="app-content page-enter">
+
+      <!-- ── KPI Cards ── -->
+      <div class="kpi-grid" id="kpi-grid">
+
+        <!-- Revenue -->
+        <div class="kpi-card kpi-card--primary animate-on-load animate-fade-in-up" id="kpi-revenue">
+          <div class="kpi-card__top">
+            <div class="kpi-card__icon kpi-card__icon--primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+              </svg>
+            </div>
+            <div class="kpi-card__trend kpi-card__trend--up" id="kpi-revenue-trend">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                <polyline points="17 6 23 6 23 12"/>
+              </svg>
+              +18.3%
+            </div>
+          </div>
+          <div class="kpi-card__value font-mono" id="kpi-revenue-value">$0</div>
+          <div class="kpi-card__label">Total Revenue</div>
+          <div class="kpi-card__sparkline">
+            <canvas id="sparkline-revenue"></canvas>
+          </div>
+        </div>
+
+        <!-- Orders -->
+        <div class="kpi-card kpi-card--accent animate-on-load animate-fade-in-up delay-150" id="kpi-orders">
+          <div class="kpi-card__top">
+            <div class="kpi-card__icon kpi-card__icon--accent">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <path d="M16 10a4 4 0 01-8 0"/>
+              </svg>
+            </div>
+            <div class="kpi-card__trend kpi-card__trend--up" id="kpi-orders-trend">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                <polyline points="17 6 23 6 23 12"/>
+              </svg>
+              +21.4%
+            </div>
+          </div>
+          <div class="kpi-card__value font-mono" id="kpi-orders-value">0</div>
+          <div class="kpi-card__label">Total Orders</div>
+          <div class="kpi-card__sparkline">
+            <canvas id="sparkline-orders"></canvas>
+          </div>
+        </div>
+
+        <!-- Customers -->
+        <div class="kpi-card kpi-card--success animate-on-load animate-fade-in-up delay-300" id="kpi-customers">
+          <div class="kpi-card__top">
+            <div class="kpi-card__icon kpi-card__icon--success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+              </svg>
+            </div>
+            <div class="kpi-card__trend kpi-card__trend--up" id="kpi-customers-trend">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                <polyline points="17 6 23 6 23 12"/>
+              </svg>
+              +24.7%
+            </div>
+          </div>
+          <div class="kpi-card__value font-mono" id="kpi-customers-value">0</div>
+          <div class="kpi-card__label">Total Customers</div>
+          <div class="kpi-card__sparkline">
+            <canvas id="sparkline-customers"></canvas>
+          </div>
+        </div>
+
+        <!-- Avg Order Value -->
+        <div class="kpi-card kpi-card--warning animate-on-load animate-fade-in-up delay-400" id="kpi-aov">
+          <div class="kpi-card__top">
+            <div class="kpi-card__icon kpi-card__icon--warning">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+              </svg>
+            </div>
+            <div class="kpi-card__trend kpi-card__trend--down" id="kpi-aov-trend">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/>
+                <polyline points="17 18 23 18 23 12"/>
+              </svg>
+              -2.6%
+            </div>
+          </div>
+          <div class="kpi-card__value font-mono" id="kpi-aov-value">$0</div>
+          <div class="kpi-card__label">Avg. Order Value</div>
+          <div class="kpi-card__sparkline">
+            <canvas id="sparkline-aov"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Revenue Trend + Category Donut ── -->
+      <div class="charts-row" style="margin-top: var(--space-6);">
+
+        <!-- Revenue Trend Chart -->
+        <div class="chart-card animate-on-load animate-fade-in-up delay-200">
+          <div class="chart-card__header">
+            <div>
+              <div class="chart-card__title">Revenue Trend</div>
+              <div class="chart-card__subtitle">Monthly revenue vs target · 2024</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="tab-group" id="revenue-chart-tabs">
+                <button class="tab-btn active" data-chart-mode="revenue-target">Revenue</button>
+                <button class="tab-btn" data-chart-mode="profit">Profit</button>
+              </div>
+            </div>
+          </div>
+          <div class="hero-chart-body">
+            <canvas id="chart-revenue-trend"></canvas>
+          </div>
+        </div>
+
+        <!-- Category Donut -->
+        <div class="chart-card animate-on-load animate-fade-in-up delay-300">
+          <div class="chart-card__header">
+            <div>
+              <div class="chart-card__title">Sales by Category</div>
+              <div class="chart-card__subtitle">Revenue breakdown · 2024</div>
+            </div>
+          </div>
+          <div class="donut-wrapper">
+            <div class="donut-chart-wrap">
+              <canvas id="chart-category-donut"></canvas>
+            </div>
+            <!-- Category Legend -->
+            <div id="category-legend" style="margin-top: var(--space-4); flex: 1; overflow: auto;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Sales vs Target + Orders Bar ── -->
+      <div class="charts-row" style="margin-top: var(--space-6);">
+        <div class="chart-card animate-on-load animate-fade-in-up delay-200">
+          <div class="chart-card__header">
+            <div>
+              <div class="chart-card__title">Sales vs Target</div>
+              <div class="chart-card__subtitle">Monthly performance against goals</div>
+            </div>
+          </div>
+          <div class="chart-card__body chart-card__body--md" style="height: 260px;">
+            <canvas id="chart-sales-vs-target"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card animate-on-load animate-fade-in-up delay-300">
+          <div class="chart-card__header">
+            <div>
+              <div class="chart-card__title">Sales Funnel</div>
+              <div class="chart-card__subtitle">Visitor to conversion pipeline</div>
+            </div>
+          </div>
+          <div class="chart-card__body" style="height: 260px;">
+            <canvas id="chart-funnel"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Bottom Row: Recent Orders | Top Products | Leaderboard ── -->
+      <div class="bottom-row" style="margin-top: var(--space-6);">
+
+        <!-- Recent Orders Table -->
+        <div class="chart-card animate-on-load animate-fade-in-up delay-100">
+          <div class="chart-card__header">
+            <div>
+              <div class="chart-card__title">Recent Orders</div>
+              <div class="chart-card__subtitle">Last 10 transactions</div>
+            </div>
+            <a href="pages/reports.html" class="btn btn--ghost btn--sm">View All</a>
+          </div>
+          <div class="table-wrapper">
+            <table class="table" id="recent-orders-table">
+              <thead>
+                <tr>
+                  <th data-sort="id" data-type="string">Order</th>
+                  <th data-sort="customer" data-type="string">Customer</th>
+                  <th data-sort="amount" data-type="number">Amount</th>
+                  <th data-sort="status" data-type="string">Status</th>
+                </tr>
+              </thead>
+              <tbody id="orders-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Top Products -->
+        <div class="chart-card animate-on-load animate-fade-in-up delay-200">
+          <div class="chart-card__header">
+            <div>
+              <div class="chart-card__title">Top Products</div>
+              <div class="chart-card__subtitle">By revenue · 2024</div>
+            </div>
+            <a href="pages/products.html" class="btn btn--ghost btn--sm">View All</a>
+          </div>
+          <div id="top-products-list"></div>
+        </div>
+
+        <!-- Sales Leaderboard -->
+        <div class="chart-card animate-on-load animate-fade-in-up delay-300">
+          <div class="chart-card__header">
+            <div>
+              <div class="chart-card__title">Sales Team</div>
+              <div class="chart-card__subtitle">Revenue leaderboard</div>
+            </div>
+          </div>
+          <div id="leaderboard-list"></div>
+        </div>
+      </div>
+
+    </div><!-- /app-content -->
+  </main>
+</div><!-- /app-layout -->
+
+<!-- JS -->
+<script src="assets/js/data.js"></script>
+<script src="assets/js/utils.js"></script>
+<script src="assets/js/filters.js"></script>
+<script src="assets/js/charts.js"></script>
+<script src="assets/js/dashboard.js"></script>
+</body>
+</html>
