@@ -1,0 +1,354 @@
+/* ============================================================
+   ANIMATIONS — Sales Analytics Dashboard
+   All keyframes, transitions, and micro-animation utilities
+   ============================================================ */
+
+/* ─────────────────────────────────────────
+   Keyframe Definitions
+───────────────────────────────────────── */
+
+/* Fade animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Scale animations */
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes scaleInBounce {
+  0%   { opacity: 0; transform: scale(0.85); }
+  70%  { transform: scale(1.03); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Number counter animation */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Glow pulse */
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 20px var(--color-primary-glow); }
+  50%       { box-shadow: 0 0 40px var(--color-primary-glow), 0 0 60px rgba(99,102,241,0.15); }
+}
+
+@keyframes glowPulseAccent {
+  0%, 100% { box-shadow: 0 0 20px var(--color-accent-glow); }
+  50%       { box-shadow: 0 0 40px var(--color-accent-glow), 0 0 60px rgba(34,211,238,0.15); }
+}
+
+/* Gradient shift */
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Shimmer / skeleton loading */
+@keyframes shimmer {
+  0%   { background-position: -468px 0; }
+  100% { background-position: 468px 0; }
+}
+
+/* Spin */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Dot bounce (loading indicator) */
+@keyframes dotBounce {
+  0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+  40%           { transform: scale(1.1); opacity: 1; }
+}
+
+/* Slide in from left (sidebar) */
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+
+/* Bar chart grow */
+@keyframes barGrow {
+  from { transform: scaleY(0); transform-origin: bottom; }
+  to   { transform: scaleY(1); transform-origin: bottom; }
+}
+
+/* Line draw */
+@keyframes lineDraw {
+  from { stroke-dashoffset: 1000; }
+  to   { stroke-dashoffset: 0; }
+}
+
+/* Float */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-6px); }
+}
+
+/* Ripple */
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Badge ping */
+@keyframes ping {
+  75%, 100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+/* Status dot blink */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+/* ─────────────────────────────────────────
+   Animation Utility Classes
+───────────────────────────────────────── */
+
+/* Entrance animations */
+.animate-fade-in       { animation: fadeIn       0.4s var(--ease-out-quart) forwards; }
+.animate-fade-in-up    { animation: fadeInUp     0.5s var(--ease-out-quart) forwards; }
+.animate-fade-in-down  { animation: fadeInDown   0.5s var(--ease-out-quart) forwards; }
+.animate-fade-in-left  { animation: fadeInLeft   0.5s var(--ease-out-quart) forwards; }
+.animate-fade-in-right { animation: fadeInRight  0.5s var(--ease-out-quart) forwards; }
+.animate-scale-in      { animation: scaleIn      0.4s var(--ease-out-quart) forwards; }
+.animate-scale-bounce  { animation: scaleInBounce 0.5s var(--ease-bounce)   forwards; }
+
+/* Delays for staggered entrance */
+.delay-100  { animation-delay: 0.1s; }
+.delay-150  { animation-delay: 0.15s; }
+.delay-200  { animation-delay: 0.2s; }
+.delay-250  { animation-delay: 0.25s; }
+.delay-300  { animation-delay: 0.3s; }
+.delay-400  { animation-delay: 0.4s; }
+.delay-500  { animation-delay: 0.5s; }
+.delay-600  { animation-delay: 0.6s; }
+.delay-700  { animation-delay: 0.7s; }
+.delay-800  { animation-delay: 0.8s; }
+
+/* Start hidden, animate-in on load */
+.animate-on-load {
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+/* Persistent animations */
+.animate-glow-pulse        { animation: glowPulse       2.5s ease-in-out infinite; }
+.animate-glow-pulse-accent { animation: glowPulseAccent 2.5s ease-in-out infinite; }
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradientShift 4s ease infinite;
+}
+.animate-spin   { animation: spin   1s linear infinite; }
+.animate-float  { animation: float  3s ease-in-out infinite; }
+.animate-blink  { animation: blink  1.5s ease-in-out infinite; }
+
+/* ─────────────────────────────────────────
+   Hover Effect Classes
+───────────────────────────────────────── */
+
+/* Lift on hover */
+.hover-lift {
+  transition: transform 0.25s var(--ease-out-quart), box-shadow 0.25s var(--ease-out-quart);
+}
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+}
+
+/* Glow on hover */
+.hover-glow-primary {
+  transition: box-shadow 0.25s var(--ease-in-out);
+}
+.hover-glow-primary:hover {
+  box-shadow: 0 0 30px var(--color-primary-glow);
+}
+
+.hover-glow-accent {
+  transition: box-shadow 0.25s var(--ease-in-out);
+}
+.hover-glow-accent:hover {
+  box-shadow: 0 0 30px var(--color-accent-glow);
+}
+
+/* Scale on hover */
+.hover-scale {
+  transition: transform 0.2s var(--ease-bounce);
+}
+.hover-scale:hover {
+  transform: scale(1.04);
+}
+
+/* Brighten on hover */
+.hover-brighten {
+  transition: filter 0.2s var(--ease-in-out);
+}
+.hover-brighten:hover {
+  filter: brightness(1.15);
+}
+
+/* Surface brighten */
+.hover-surface {
+  transition: background 0.2s var(--ease-in-out), border-color 0.2s var(--ease-in-out);
+}
+.hover-surface:hover {
+  background: var(--color-glass-hover) !important;
+  border-color: var(--color-border-strong) !important;
+}
+
+/* ─────────────────────────────────────────
+   Skeleton / Loading States
+───────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.04) 25%,
+    rgba(255,255,255,0.09) 50%,
+    rgba(255,255,255,0.04) 75%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-md);
+}
+
+.skeleton-text {
+  height: 14px;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-title {
+  height: 20px;
+  width: 60%;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-card {
+  height: 120px;
+  border-radius: var(--radius-xl);
+}
+
+/* ─────────────────────────────────────────
+   Loading Spinner
+───────────────────────────────────────── */
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.spinner--sm { width: 16px; height: 16px; }
+.spinner--lg { width: 36px; height: 36px; border-width: 3px; }
+
+/* ─────────────────────────────────────────
+   Ripple Effect (click feedback)
+───────────────────────────────────────── */
+.ripple-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-effect {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(0);
+  animation: ripple 0.5s linear;
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────
+   Page Transition
+───────────────────────────────────────── */
+.page-enter {
+  animation: fadeInUp 0.4s var(--ease-out-quart) forwards;
+}
+
+/* ─────────────────────────────────────────
+   Chart Animation Helpers
+───────────────────────────────────────── */
+.chart-container {
+  position: relative;
+  animation: fadeIn 0.6s var(--ease-out-quart) 0.2s both;
+}
+
+/* Number counter roll-in */
+.kpi-value {
+  animation: countUp 0.5s var(--ease-out-quart) forwards;
+}
+
+/* Trend badge bounce */
+.trend-badge {
+  animation: scaleInBounce 0.4s var(--ease-bounce) forwards;
+}
+
+/* ─────────────────────────────────────────
+   Status Dot
+───────────────────────────────────────── */
+.status-dot {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-dot::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.status-dot.live::before {
+  background: var(--color-success);
+  animation: blink 1.5s ease-in-out infinite;
+  box-shadow: 0 0 6px var(--color-success);
+}
+
+.status-dot.live::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-success);
+  animation: ping 1.5s ease-out infinite;
+  opacity: 0.4;
+}
