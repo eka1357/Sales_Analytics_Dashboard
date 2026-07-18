@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Product Performance — Sales Analytics Dashboard" />
+  <title>Products · SalesIQ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/design-system.css" />
+  <link rel="stylesheet" href="../assets/css/animations.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <style>
+    .products-kpi { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-6); }
+    .products-charts { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); margin-top: var(--space-6); }
+    .star { color: var(--color-warning); font-size: 12px; }
+    .stock-indicator { display: flex; align-items: center; gap: 6px; }
+    @media (max-width: 1280px) { .products-kpi { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 1024px) { .products-charts { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="app-sidebar">
+    <nav class="sidebar">
+      <a href="../index.html" class="sidebar__logo">
+        <div class="sidebar__logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div class="sidebar-logo-text">
+          <span class="logo-name">SalesIQ</span>
+          <span class="logo-sub">Analytics</span>
+        </div>
+      </a>
+      <div class="sidebar__nav">
+        <div class="sidebar-section-title">Main Menu</div>
+        <a href="../index.html" class="nav-item"><span class="nav-item__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span><span class="sidebar-label">Overview</span></a>
+        <a href="products.html" class="nav-item active"><span class="nav-item__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></span><span class="sidebar-label">Products</span></a>
+        <a href="customers.html" class="nav-item"><span class="nav-item__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span><span class="sidebar-label">Customers</span></a>
+        <a href="geography.html" class="nav-item"><span class="nav-item__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></span><span class="sidebar-label">Geography</span></a>
+        <a href="reports.html" class="nav-item"><span class="nav-item__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span><span class="sidebar-label">Reports</span></a>
+      </div>
+      <div class="sidebar__footer">
+        <div class="sidebar__user">
+          <div class="sidebar__user-avatar">EK</div>
+          <div class="sidebar__user-info"><div class="sidebar__user-name">Ekavardhan</div><div class="sidebar__user-role">Admin</div></div>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="app-main">
+    <header class="app-topbar">
+      <div class="topbar">
+        <div class="topbar__left">
+          <h1 class="topbar__title">Products</h1>
+          <p class="topbar__subtitle">Performance, revenue, and inventory insights</p>
+        </div>
+        <div class="topbar__right">
+          <select class="select" id="category-filter">
+            <option value="all">All Categories</option>
+            <option value="electronics">Electronics</option>
+            <option value="apparel">Apparel</option>
+            <option value="furniture">Furniture</option>
+            <option value="food_beverage">Food & Beverage</option>
+            <option value="sports">Sports</option>
+            <option value="beauty">Beauty</option>
+          </select>
+          <select class="select" id="sort-filter">
+            <option value="revenue">Sort: Revenue</option>
+            <option value="units">Sort: Units Sold</option>
+            <option value="growth">Sort: Growth</option>
+            <option value="rating">Sort: Rating</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <div class="app-content page-enter">
+
+      <!-- KPI Row -->
+      <div class="products-kpi">
+        <div class="kpi-card kpi-card--primary animate-on-load animate-fade-in-up">
+          <div class="kpi-card__top">
+            <div class="kpi-card__icon kpi-card__icon--primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+            </div>
+            <span class="badge badge--success">+12 new</span>
+          </div>
+          <div class="kpi-card__value font-mono" id="prod-total">12</div>
+          <div class="kpi-card__label">Total Products</div>
+        </div>
+        <div class="kpi-card kpi-card--accent animate-on-load animate-fade-in-up delay-150">
+          <div class="kpi-card__top">
+            <div class="kpi-card__icon kpi-card__icon--accent">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+            </div>
+            <div class="kpi-card__trend kpi-card__trend--up">↑ 16.8%</div>
+          </div>
+          <div class="kpi-card__value font-mono" id="prod-revenue">$0</div>
+          <div class="kpi-card__label">Total Product Revenue</div>
+        </div>
+        <div class="kpi-card kpi-card--success animate-on-load animate-fade-in-up delay-300">
+          <div class="kpi-card__top">
+            <div class="kpi-card__icon kpi-card__icon--success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div class="kpi-card__trend kpi-card__trend--up">↑ 19.2%</div>
+          </div>
+          <div class="kpi-card__value font-mono" id="prod-units">0</div>
+          <div class="kpi-card__label">Units Sold</div>
+        </div>
+        <div class="kpi-card kpi-card--warning animate-on-load animate-fade-in-up delay-400">
+          <div class="kpi-card__top">
+            <div class="kpi-card__icon kpi-card__icon--warning">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span class="badge badge--warning">⭐ Avg</span>
+          </div>
+          <div class="kpi-card__value font-mono" id="prod-rating">4.6</div>
+          <div class="kpi-card__label">Avg. Product Rating</div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="products-charts">
+        <div class="chart-card animate-on-load animate-fade-in-up delay-200">
+          <div class="chart-card__header">
+            <div><div class="chart-card__title">Revenue by Category</div><div class="chart-card__subtitle">Category contribution to total revenue</div></div>
+          </div>
+          <div class="chart-card__body" style="height:280px"><canvas id="chart-category-revenue"></canvas></div>
+        </div>
+        <div class="chart-card animate-on-load animate-fade-in-up delay-300">
+          <div class="chart-card__header">
+            <div><div class="chart-card__title">Category Growth</div><div class="chart-card__subtitle">YoY growth rate by category</div></div>
+          </div>
+          <div class="chart-card__body" style="height:280px"><canvas id="chart-category-growth"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Products Table -->
+      <div class="chart-card animate-on-load animate-fade-in-up delay-200" style="margin-top:var(--space-6);">
+        <div class="chart-card__header">
+          <div><div class="chart-card__title">All Products</div><div class="chart-card__subtitle" id="products-count-label">Showing all 12 products</div></div>
+          <div class="topbar__search" style="width:220px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="product-search" placeholder="Search products…" autocomplete="off" />
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table class="table" id="products-table">
+            <thead>
+              <tr>
+                <th data-sort="id" data-type="string">#</th>
+                <th data-sort="name" data-type="string">Product</th>
+                <th data-sort="category" data-type="string">Category</th>
+                <th data-sort="price" data-type="number">Price</th>
+                <th data-sort="sold" data-type="number">Units Sold</th>
+                <th data-sort="revenue" data-type="number">Revenue</th>
+                <th data-sort="growth" data-type="number">Growth</th>
+                <th data-sort="rating" data-type="number">Rating</th>
+                <th>Stock</th>
+              </tr>
+            </thead>
+            <tbody id="products-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/utils.js"></script>
+<script src="../assets/js/filters.js"></script>
+<script src="../assets/js/charts.js"></script>
+<script>
+'use strict';
+document.addEventListener('DOMContentLoaded', function () {
+  Charts.applyGlobalDefaults();
+
+  // KPIs
+  const allProds = SalesData.products;
+  const totalRevenue = allProds.reduce((s, p) => s + p.revenue, 0);
+  const totalUnits   = allProds.reduce((s, p) => s + p.sold, 0);
+  const avgRating    = allProds.reduce((s, p) => s + p.rating, 0) / allProds.length;
+  Utils.animateCounter(document.getElementById('prod-revenue'), totalRevenue, 1400, v => Utils.formatCurrency(v, true));
+  Utils.animateCounter(document.getElementById('prod-units'), totalUnits, 1200, v => Utils.formatCompact(Math.round(v)));
+  document.getElementById('prod-rating').textContent = avgRating.toFixed(1);
+
+  // Category charts
+  const cats = SalesData.categorySales;
+  const catCtx = document.getElementById('chart-category-revenue').getContext('2d');
+  new Chart(catCtx, {
+    type: 'doughnut',
+    data: {
+      labels: cats.map(c => c.category),
+      datasets: [{ data: cats.map(c => c.revenue), backgroundColor: cats.map(c => Utils.hexToRgba(c.color, 0.85)), borderColor: cats.map(c => c.color), borderWidth: 2, hoverOffset: 8 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { display: true, position: 'right', labels: { color: '#94a3b8', usePointStyle: true, padding: 12, font: { size: 11 } } }, tooltip: { callbacks: { label: ctx => ' ' + ctx.label + ': ' + Utils.formatCurrency(ctx.parsed, true) } } } }
+  });
+
+  const growCtx = document.getElementById('chart-category-growth').getContext('2d');
+  new Chart(growCtx, {
+    type: 'bar',
+    data: {
+      labels: cats.map(c => c.category),
+      datasets: [{ label: 'Growth %', data: cats.map(c => c.growth), backgroundColor: cats.map(c => Utils.hexToRgba(c.color, 0.75)), hoverBackgroundColor: cats.map(c => c.color), borderRadius: 8, borderSkipped: false }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } }, border: { display: false } },
+        y: { grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false }, ticks: { color: '#64748b', font: { size: 11 }, callback: v => v + '%' }, border: { display: false } }
+      },
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' Growth: +' + ctx.parsed.y + '%' } } }
+    }
+  });
+
+  // Render table
+  function renderTable(products) {
+    const tbody = document.getElementById('products-tbody');
+    document.getElementById('products-count-label').textContent = `Showing ${products.length} products`;
+    tbody.innerHTML = products.map((p, i) => {
+      const stars = '★'.repeat(Math.floor(p.rating)) + (p.rating % 1 >= 0.5 ? '½' : '');
+      const stockColor = p.stock < 50 ? 'var(--color-danger)' : p.stock < 150 ? 'var(--color-warning)' : 'var(--color-success)';
+      const stockLabel = p.stock < 50 ? 'Low' : p.stock < 150 ? 'Med' : 'Good';
+      return `<tr>
+        <td><span style="font-family:var(--font-mono);font-size:var(--font-size-xs);color:var(--color-text-muted);">${p.id}</span></td>
+        <td data-col="name" data-value="${p.name}">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:${p.color};box-shadow:0 0 8px ${p.color};flex-shrink:0;"></div>
+            <span style="font-weight:600;color:var(--color-text);">${p.name}</span>
+          </div>
+        </td>
+        <td data-col="category" data-value="${p.category}"><span class="badge badge--muted">${p.category}</span></td>
+        <td data-col="price" data-value="${p.price}" class="font-mono">${Utils.formatCurrency(p.price)}</td>
+        <td data-col="sold" data-value="${p.sold}" class="font-mono">${Utils.formatNumber(p.sold)}</td>
+        <td data-col="revenue" data-value="${p.revenue}"><span class="font-mono" style="color:var(--color-text);font-weight:600;">${Utils.formatCurrency(p.revenue, true)}</span></td>
+        <td data-col="growth" data-value="${p.growth}"><span style="color:${p.growth > 0 ? 'var(--color-success)' : 'var(--color-danger)'};font-weight:600;">+${p.growth}%</span></td>
+        <td data-col="rating" data-value="${p.rating}"><span class="star">${stars}</span> <span style="color:var(--color-text-muted);font-size:11px;">${p.rating}</span></td>
+        <td>
+          <div class="stock-indicator">
+            <div class="progress-bar" style="width:60px;">
+              <div class="progress-bar__fill" style="width:${Math.min(100,p.stock/5)}%;background:${stockColor};"></div>
+            </div>
+            <span style="font-size:var(--font-size-xs);color:${stockColor};font-weight:600;">${stockLabel}</span>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+    Utils.makeTableSortable(document.getElementById('products-table'));
+  }
+
+  // Initial render
+  renderTable(SalesData.products);
+
+  // Category filter
+  document.getElementById('category-filter').addEventListener('change', function () {
+    Filters.setCategory(this.value);
+    renderTable(Filters.getFilteredProducts());
+  });
+
+  // Sort filter
+  document.getElementById('sort-filter').addEventListener('change', function () {
+    const key = this.value;
+    const sorted = [...SalesData.products].sort((a, b) => b[key] - a[key]);
+    renderTable(sorted);
+  });
+
+  // Search
+  document.getElementById('product-search').addEventListener('input', Utils.debounce(function () {
+    Filters.setSearch(this.value);
+    renderTable(Filters.getFilteredProducts());
+  }, 300));
+
+  // Stagger
+  document.querySelectorAll('.animate-on-load').forEach((el, i) => { el.style.animationDelay = (i * 80) + 'ms'; });
+});
+</script>
+</body>
+</html>
