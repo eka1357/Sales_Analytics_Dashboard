@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Geographic Sales Performance — Sales Analytics Dashboard" />
+  <title>Geography · SalesIQ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/design-system.css" />
+  <link rel="stylesheet" href="../assets/css/animations.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <style>
+    .geo-kpi { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-4); }
+    .region-card { background: var(--color-glass); border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: var(--space-5); transition: var(--transition-normal); cursor: default; }
+    .region-card:hover { border-color: var(--color-border-strong); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+    .region-card__header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-4); }
+    .region-card__dot { width: 12px; height: 12px; border-radius: 50%; }
+    .region-card__revenue { font-family: var(--font-mono); font-size: var(--font-size-3xl); font-weight: 800; line-height: 1; margin-bottom: 4px; }
+    .region-card__label { font-size: var(--font-size-sm); color: var(--color-text-muted); }
+    .region-card__stats { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-top: var(--space-4); }
+    .region-card__stat-label { font-size: var(--font-size-xs); color: var(--color-text-muted); }
+    .region-card__stat-value { font-size: var(--font-size-sm); font-weight: 600; color: var(--color-text); }
+    .geo-charts { display: grid; grid-template-columns: 2fr 1fr; gap: var(--space-6); margin-top: var(--space-6); }
+    @media (max-width: 1280px) { .geo-kpi { grid-template-columns: repeat(3,1fr); } }
+    @media (max-width: 1024px) { .geo-kpi { grid-template-columns: repeat(2,1fr); } .geo-charts { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="app-sidebar">
+    <nav class="sidebar">
+      <a href="../index.html" class="sidebar__logo">
+        <div class="sidebar__logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div class="sidebar-logo-text"><span class="logo-name">SalesIQ</span><span class="logo-sub">Analytics</span></div>
+      </a>
+      <div class="sidebar__nav">
+        <div class="sidebar-section-title">Main Menu</div>
+        <a href="../index.html" class="nav-item"><span class="nav-item__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span><span class="sidebar-label">Overview</span></a>
+        <a href="products.html" class="nav-item"><span class="nav-item__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></span><span class="sidebar-label">Products</span></a>
+        <a href="customers.html" class="nav-item"><span class="nav-item__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span><span class="sidebar-label">Customers</span></a>
+        <a href="geography.html" class="nav-item active"><span class="nav-item__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></span><span class="sidebar-label">Geography</span></a>
+        <a href="reports.html" class="nav-item"><span class="nav-item__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><span class="sidebar-label">Reports</span></a>
+      </div>
+      <div class="sidebar__footer">
+        <div class="sidebar__user">
+          <div class="sidebar__user-avatar">EK</div>
+          <div class="sidebar__user-info"><div class="sidebar__user-name">Ekavardhan</div><div class="sidebar__user-role">Admin</div></div>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="app-main">
+    <header class="app-topbar">
+      <div class="topbar">
+        <div class="topbar__left">
+          <h1 class="topbar__title">Geography</h1>
+          <p class="topbar__subtitle">Regional sales performance and city-level breakdown</p>
+        </div>
+        <div class="topbar__right">
+          <div class="tab-group" id="geo-period-tabs">
+            <button class="tab-btn" data-period="quarter">Q4</button>
+            <button class="tab-btn active" data-period="year">Full Year</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="app-content page-enter">
+
+      <!-- Regional KPI Cards -->
+      <div class="geo-kpi" id="region-cards"></div>
+
+      <!-- Charts -->
+      <div class="geo-charts">
+        <!-- Regional Bar -->
+        <div class="chart-card animate-on-load animate-fade-in-up delay-200">
+          <div class="chart-card__header">
+            <div><div class="chart-card__title">Revenue by Region</div><div class="chart-card__subtitle">Comparative regional performance</div></div>
+          </div>
+          <div class="chart-card__body" style="height:300px;"><canvas id="chart-regional-bar"></canvas></div>
+        </div>
+        <!-- Regional Share Donut -->
+        <div class="chart-card animate-on-load animate-fade-in-up delay-300">
+          <div class="chart-card__header">
+            <div><div class="chart-card__title">Revenue Share</div><div class="chart-card__subtitle">% of total by region</div></div>
+          </div>
+          <div class="chart-card__body" style="height:300px;"><canvas id="chart-region-donut"></canvas></div>
+        </div>
+      </div>
+
+      <!-- City Breakdown Table -->
+      <div class="chart-card animate-on-load animate-fade-in-up delay-200" style="margin-top:var(--space-6);">
+        <div class="chart-card__header">
+          <div><div class="chart-card__title">City-Level Breakdown</div><div class="chart-card__subtitle">Top performing cities by region</div></div>
+        </div>
+        <div class="table-wrapper">
+          <table class="table" id="city-table">
+            <thead>
+              <tr>
+                <th data-sort="city" data-type="string">City</th>
+                <th data-sort="region" data-type="string">Region</th>
+                <th data-sort="revenue" data-type="number">Revenue</th>
+                <th data-sort="orders" data-type="number">Orders</th>
+                <th>Share of Region</th>
+              </tr>
+            </thead>
+            <tbody id="city-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/utils.js"></script>
+<script src="../assets/js/filters.js"></script>
+<script src="../assets/js/charts.js"></script>
+<script>
+'use strict';
+document.addEventListener('DOMContentLoaded', function () {
+  Charts.applyGlobalDefaults();
+  const regions = SalesData.regionalSales;
+  const totalRevenue = regions.reduce((s, r) => s + r.revenue, 0);
+
+  // Region KPI Cards
+  const cardsEl = document.getElementById('region-cards');
+  cardsEl.innerHTML = regions.map((r, i) => `
+    <div class="region-card animate-on-load animate-fade-in-up" style="animation-delay:${i*80}ms;border-top:3px solid ${r.color};">
+      <div class="region-card__header">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="region-card__dot" style="background:${r.color};box-shadow:0 0 8px ${r.color};"></div>
+          <span style="font-size:var(--font-size-md);font-weight:600;color:var(--color-text);">${r.region}</span>
+        </div>
+        <span class="badge badge--success" style="font-size:10px;">+${r.growth}%</span>
+      </div>
+      <div class="region-card__revenue" style="color:${r.color};">${Utils.formatCurrency(r.revenue, true)}</div>
+      <div class="region-card__label">Revenue</div>
+      <div class="progress-bar" style="margin-top:var(--space-3);">
+        <div class="progress-bar__fill" style="width:${Utils.calcPercent(r.revenue,totalRevenue).toFixed(1)}%;background:${r.color};"></div>
+      </div>
+      <div class="region-card__stats">
+        <div><div class="region-card__stat-label">Orders</div><div class="region-card__stat-value">${Utils.formatNumber(r.orders)}</div></div>
+        <div><div class="region-card__stat-label">Customers</div><div class="region-card__stat-value">${Utils.formatNumber(r.customers)}</div></div>
+      </div>
+    </div>
+  `).join('');
+
+  // Bar Chart
+  Charts.createRegionalBar('chart-regional-bar', regions);
+
+  // Donut
+  const donutCtx = document.getElementById('chart-region-donut').getContext('2d');
+  new Chart(donutCtx, {
+    type: 'doughnut',
+    data: {
+      labels: regions.map(r => r.region),
+      datasets: [{ data: regions.map(r => r.revenue), backgroundColor: regions.map(r => Utils.hexToRgba(r.color, 0.8)), borderColor: regions.map(r => r.color), borderWidth: 2, hoverOffset: 8 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '68%',
+      plugins: {
+        legend: { display: true, position: 'bottom', labels: { color: '#94a3b8', usePointStyle: true, padding: 16, font: { size: 11 } } },
+        tooltip: { callbacks: { label: ctx => ' ' + ctx.label + ': ' + Utils.calcPercent(ctx.parsed, totalRevenue).toFixed(1) + '%' } }
+      }
+    }
+  });
+
+  // City Table
+  const allCities = regions.flatMap(r => r.cities.map(c => ({ ...c, region: r.region, regionRevenue: r.revenue, color: r.color })));
+  const cityTbody = document.getElementById('city-tbody');
+  cityTbody.innerHTML = allCities.map(c => {
+    const share = Utils.calcPercent(c.revenue, c.regionRevenue);
+    return `<tr>
+      <td data-col="city" data-value="${c.name}">
+        <span style="font-weight:600;color:var(--color-text);">${c.name}</span>
+      </td>
+      <td data-col="region" data-value="${c.region}">
+        <span style="display:flex;align-items:center;gap:6px;">
+          <span style="width:8px;height:8px;border-radius:50%;background:${c.color};display:inline-block;"></span>
+          ${c.region}
+        </span>
+      </td>
+      <td data-col="revenue" data-value="${c.revenue}">
+        <span class="font-mono" style="color:var(--color-text);font-weight:600;">${Utils.formatCurrency(c.revenue, true)}</span>
+      </td>
+      <td data-col="orders" data-value="${c.orders}" class="font-mono">${Utils.formatNumber(c.orders)}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="progress-bar" style="width:100px;">
+            <div class="progress-bar__fill" style="width:${share.toFixed(1)}%;background:${c.color};"></div>
+          </div>
+          <span style="font-size:var(--font-size-xs);color:var(--color-text-muted);">${share.toFixed(1)}%</span>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+  Utils.makeTableSortable(document.getElementById('city-table'));
+});
+</script>
+</body>
+</html>
