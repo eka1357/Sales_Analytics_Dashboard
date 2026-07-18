@@ -91,6 +91,17 @@ sales-analytics-dashboard/
         raw/
         processed/
 
+ | Phase | Status | Description |
+|-------|--------|-------------|
+| 1 | ✅ Done | Foundation & Design System |
+| 2 | ✅ Done | Data Layer & Utilities |
+| 3 | ✅ Done | Charts & Visualizations |
+| 4 | ✅ Done | Main Dashboard |
+| 5 | ✅ Done | Products Page |
+| 6 | ✅ Done | Customers Page |
+| 7 | ✅ Done | Geography Page |
+| 8 | ✅ Done | Reports Page |       business_report.md
+
     notebooks/
 
     sql/
